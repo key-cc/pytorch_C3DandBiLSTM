@@ -1,19 +1,9 @@
 # pytorch-video-recognition
 
-<table style="border:0px">
-   <tr>
-       <td><img src="assets/demo1.gif" frame=void rules=none></td>
-       <td><img src="assets/demo2.gif" frame=void rules=none></td>
-   </tr>
-</table>
-
 ## Introduction
 This repo contains several models for video action recognition,
-including C3D, R2Plus1D, R3D, inplemented using PyTorch (0.4.0).
-Currently, we train these models on UCF101 and HMDB51 datasets.
-**More models and datasets will be available soon!**
-
-**Note: An interesting online web game based on C3D model is in [here](https://github.com/jfzhang95/project-demo).**
+including ConvLSTM, C3D, R2Plus1D, R3D, inplemented using PyTorch .
+These models are trained on UCF101 and HMDB51 datasets.
 
 ## Installation
 The code was tested with Anaconda and Python 3.5. After installing the Anaconda environment:
