@@ -6,7 +6,6 @@ including ConvLSTM, C3D inplemented using PyTorch .
 These models are trained on UCF101 and HMDB51 datasets.
 
 ## Installation
-The code was tested with Anaconda and Python 3.5. After installing the Anaconda environment:
 
 0. Clone the repo:
     ```Shell
@@ -29,7 +28,8 @@ The code was tested with Anaconda and Python 3.5. After installing the Anaconda 
 [mypath.py](https://github.com/key-cc/pytorch_C3DandBiLSTM/blob/main/mypath.py).
 
 4. You can choose different models and datasets in
-[train.py](https://github.com/jfzhang95/pytorch-video-recognition/blob/master/train.py).
+[train.py](https://github.com/jfzhang95/pytorch-video-recognition/blob/main/train.py).
+you also need to change the line 10 in the file [dataset.py](https://github.com/key-cc/pytorch_C3DandBiLSTM/blob/main/dataloaders/dataset.py) to choose the type of the model.
 
     To train the model, please do:
     ```Shell
@@ -77,22 +77,3 @@ After pre-processing, the output dir's structure is as follows:
   ```
 
 Note: HMDB dataset's directory tree is similar to UCF101 dataset's.
-
-## Experiments
-These models were trained in machine with NVIDIA TITAN X 12gb GPU. Note that I splited
-train/val/test data for each dataset using sklearn. If you want to train models using
-official train/val/test data, you can look in [dataset.py](https://github.com/jfzhang95/pytorch-video-recognition/blob/master/dataloaders/dataset.py), and modify it to your needs.
-
-Currently, I only train C3D model in UCF and HMDB datasets. The train/val/test
-accuracy and loss curves for each experiment are shown below:
-
-- **UCF101**
-
-<p align="center"><img src="assets/ucf101_results.png" align="center" width=900 height=auto/></p>
-
-- **HMDB51**
-
-<p align="center"><img src="assets/hmdb51_results.png" align="center" width=900 height=auto/></p>
-
-Experiments for other models will be updated soon ...
-# pytorch_C3DandBiLSTM
