@@ -77,3 +77,20 @@ After pre-processing, the output dir's structure is as follows:
   ```
 
 Note: HMDB dataset's directory tree is similar to UCF101 dataset's.
+
+## Results and Models
+
+### ucf101
+
+| Model | Input size | total parameters | accuracy  |
+| :---: | :---: | :---: | :---: | 
+|  C3D  |     16 x 112 x 112     |  78.41M  |   96.33  | 
+| ConvLSTM  |     16x112x112      |  74M  |  95.37  | 
+
+### hmdb51
+
+| Model | Input size | total parameters | accuracy  |
+| :---: | :---: | :---: | :---: | 
+|  C3D  |     16 x 112 x 112     |  78.20M  |     | 
+| ConvLSTM  |     16x112x112      |  73.95M  |  61.03  | 
+
