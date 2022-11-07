@@ -2,7 +2,7 @@
 
 ## Introduction
 This repo contains several models for video action recognition,
-including ConvLSTM, C3D, R2Plus1D, R3D, inplemented using PyTorch .
+including ConvLSTM, C3D inplemented using PyTorch .
 These models are trained on UCF101 and HMDB51 datasets.
 
 ## Installation
@@ -10,26 +10,23 @@ The code was tested with Anaconda and Python 3.5. After installing the Anaconda 
 
 0. Clone the repo:
     ```Shell
-    git clone https://github.com/jfzhang95/pytorch-video-recognition.git
+    git clone https://github.com/key-cc/pytorch_C3DandBiLSTM.git
     cd pytorch-video-recognition
     ```
 
 1. Install dependencies:
-
-    For PyTorch dependency, see [pytorch.org](https://pytorch.org/) for more details.
-
-    For custom dependencies:
     ```Shell
     conda install opencv
-    pip install tqdm scikit-learn tensorboardX
+    pip install tqdm
+    pip install scikit-learn 
+    pip install tensorboardX
     ```
 
-2. Download pretrained model from [BaiduYun](https://pan.baidu.com/s/1saNqGBkzZHwZpG-A5RDLVw) or 
+2. Download pretrained model for C3D from [BaiduYun](https://pan.baidu.com/s/1saNqGBkzZHwZpG-A5RDLVw) or 
 [GoogleDrive](https://drive.google.com/file/d/19NWziHWh1LgCcHU34geoKwYezAogv9fX/view?usp=sharing).
-   Currently only support pretrained model for C3D.
 
 3. Configure your dataset and pretrained model path in
-[mypath.py](https://github.com/jfzhang95/pytorch-video-recognition/blob/master/mypath.py).
+[mypath.py](https://github.com/key-cc/pytorch_C3DandBiLSTM/blob/main/mypath.py).
 
 4. You can choose different models and datasets in
 [train.py](https://github.com/jfzhang95/pytorch-video-recognition/blob/master/train.py).
