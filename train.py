@@ -12,16 +12,16 @@ from torch.utils.data import DataLoader
 from torch.autograd import Variable
 
 from dataloaders.dataset import VideoDataset
-from network import C3D_model, R2Plus1D_model, R3D_model
+from network import C3D_model, ConvLSTM_model
 
 # Use GPU if available else revert to CPU
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print("Device being used:", device)
 
-nEpochs = 100  # Number of epochs for training
+nEpochs = 250  # Number of epochs for training
 resume_epoch = 0  # Default is 0, change if want to resume
 useTest = True # See evolution of the test set when training
-nTestInterval = 20 # Run on test set every nTestInterval epochs
+nTestInterval = 10 # Run on test set every nTestInterval epochs
 snapshot = 50 # Store a model every snapshot epochs
 lr = 1e-3 # Learning rate
 
@@ -46,7 +46,7 @@ else:
     run_id = int(runs[-1].split('_')[-1]) + 1 if runs else 0
 
 save_dir = os.path.join(save_dir_root, 'run', 'run_' + str(run_id))
-modelName = 'C3D' # Options: C3D or R2Plus1D or R3D
+modelName = 'C3D' # Options: C3D or ConvLSTM
 saveName = modelName + '-' + dataset
 
 def train_model(dataset=dataset, save_dir=save_dir, num_classes=num_classes, lr=lr,
@@ -61,20 +61,18 @@ def train_model(dataset=dataset, save_dir=save_dir, num_classes=num_classes, lr=
         model = C3D_model.C3D(num_classes=num_classes, pretrained=True)
         train_params = [{'params': C3D_model.get_1x_lr_params(model), 'lr': lr},
                         {'params': C3D_model.get_10x_lr_params(model), 'lr': lr * 10}]
-    elif modelName == 'R2Plus1D':
-        model = R2Plus1D_model.R2Plus1DClassifier(num_classes=num_classes, layer_sizes=(2, 2, 2, 2))
-        train_params = [{'params': R2Plus1D_model.get_1x_lr_params(model), 'lr': lr},
-                        {'params': R2Plus1D_model.get_10x_lr_params(model), 'lr': lr * 10}]
-    elif modelName == 'R3D':
-        model = R3D_model.R3DClassifier(num_classes=num_classes, layer_sizes=(2, 2, 2, 2))
+    elif modelName == 'ConvLSTM':
+        model = ConvLSTM_model.ConvLSTM(num_classes=num_classes, latent_dim=512, lstm_layers=1,hidden_dim=1024, bidirectional=True, attention=True)
         train_params = model.parameters()
     else:
-        print('We only implemented C3D and R2Plus1D models.')
+        print('We only implemented C3D and ConvLSTM models.')
         raise NotImplementedError
     criterion = nn.CrossEntropyLoss()  # standard crossentropy loss for classification
-    optimizer = optim.SGD(train_params, lr=lr, momentum=0.9, weight_decay=5e-4)
-    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10,
-                                          gamma=0.1)  # the scheduler divides the lr by 10 every 10 epochs
+    if modelName == 'ConvLSTM':
+        optimizer = torch.optim.Adam(train_params, lr=1e-5)
+    else:
+        optimizer = optim.SGD(train_params, lr=lr, momentum=0.9, weight_decay=5e-4)
+        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)  # the scheduler divides the lr by 10 every 10 epochs
 
     if resume_epoch == 0:
         print("Training {} from scratch...".format(modelName))
@@ -84,7 +82,7 @@ def train_model(dataset=dataset, save_dir=save_dir, num_classes=num_classes, lr=
         print("Initializing weights from: {}...".format(
             os.path.join(save_dir, 'models', saveName + '_epoch-' + str(resume_epoch - 1) + '.pth.tar')))
         model.load_state_dict(checkpoint['state_dict'])
-        optimizer.load_state_dict(checkpoint['opt_dict'])
+        #optimizer.load_state_dict(checkpoint['opt_dict'])
 
     print('Total params: %.2fM' % (sum(p.numel() for p in model.parameters()) / 1000000.0))
     model.to(device)
@@ -114,8 +112,9 @@ def train_model(dataset=dataset, save_dir=save_dir, num_classes=num_classes, lr=
             # set model to train() or eval() mode depending on whether it is trained
             # or being validated. Primarily affects layers such as BatchNorm or Dropout.
             if phase == 'train':
-                # scheduler.step() is to be called once every epoch during training
-                scheduler.step()
+                 #scheduler.step() is to be called once every epoch during training
+                if modelName != 'ConvLSTM':
+                    scheduler.step()
                 model.train()
             else:
                 model.eval()
@@ -125,6 +124,8 @@ def train_model(dataset=dataset, save_dir=save_dir, num_classes=num_classes, lr=
                 inputs = Variable(inputs, requires_grad=True).to(device)
                 labels = Variable(labels).to(device)
                 optimizer.zero_grad()
+                if modelName == 'ConvLSTM':
+                    model.lstm.reset_hidden_state()
 
                 if phase == 'train':
                     outputs = model(inputs)
@@ -177,6 +178,8 @@ def train_model(dataset=dataset, save_dir=save_dir, num_classes=num_classes, lr=
                 labels = labels.to(device)
 
                 with torch.no_grad():
+                    if modelName == 'ConvLSTM':
+                        model.lstm.reset_hidden_state()
                     outputs = model(inputs)
                 probs = nn.Softmax(dim=1)(outputs)
                 preds = torch.max(probs, 1)[1]
