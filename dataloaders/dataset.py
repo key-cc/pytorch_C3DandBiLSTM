@@ -7,6 +7,8 @@ import numpy as np
 from torch.utils.data import Dataset
 from mypath import Path
 
+modelName = 'ConvLSTM' # Options: C3D or ConvLSTM
+
 
 class VideoDataset(Dataset):
     r"""A Dataset for a folder of videos. Expects the directory structure to be
@@ -209,7 +211,10 @@ class VideoDataset(Dataset):
         return buffer
 
     def to_tensor(self, buffer):
-        return buffer.transpose((3, 0, 1, 2))
+        if modelName == 'ConvLSTM':
+            return buffer.transpose((0, 3, 1, 2))
+        else:
+            return buffer.transpose((3, 0, 1, 2))
 
     def load_frames(self, file_dir):
         frames = sorted([os.path.join(file_dir, img) for img in os.listdir(file_dir)])
