@@ -91,6 +91,6 @@ Note: HMDB dataset's directory tree is similar to UCF101 dataset's.
 
 | Model | Input size | total parameters | accuracy  |
 | :---: | :---: | :---: | :---: | 
-|  C3D  |     16 x 112 x 112     |  78.20M  |     | 
+|  C3D  |     16 x 112 x 112     |  78.20M  | 66.54    | 
 | ConvLSTM  |     16x112x112      |  73.95M  |  61.21  | 
 
